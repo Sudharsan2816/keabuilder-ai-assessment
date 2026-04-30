@@ -12,13 +12,20 @@ implementation for the KeaBuilder platform.
 
 ## Live Demos
 
-### Demo 1: Lead Classifier (Port 8000)
-Classifies incoming leads as HOT / WARM / COLD using Claude `claude-sonnet-4-20250514`.
+### Demo 1: Lead Classifier
+Classifies incoming leads as HOT / WARM / COLD using Claude `claude-sonnet-4-6`.
 Generates personalized, human-sounding responses. Handles incomplete inputs intelligently.
+Uses prompt caching (90% input token savings on repeated calls) and streaming (no HTTP timeouts).
 
-### Demo 2: Similarity Search (Port 8001)
+- **Swagger UI**: https://keabuilder-ai-assessment-production.up.railway.app/docs
+- **ReDoc**: https://keabuilder-ai-assessment-production.up.railway.app/redoc
+
+### Demo 2: Similarity Search
 Finds similar user inputs using TF-IDF cosine similarity.
 Production-ready upgrade path to sentence-transformers + pgvector documented.
+
+- **Swagger UI**: *(deploying)*
+- **ReDoc**: *(deploying)*
 
 ---
 
@@ -38,11 +45,11 @@ cp .env.example .env
 
 # 4. Run Demo 1 — Lead Classifier
 cd demo1_lead_classifier
-uvicorn app:app --reload --port 8000
+python -m uvicorn app:app --reload --port 8000
 
 # 5. Run Demo 2 — Similarity Search (new terminal)
-cd demo2_similarity_search
-uvicorn app:app --reload --port 8001
+cd ../demo2_similarity_search
+python -m uvicorn app:app --reload --port 8001
 ```
 
 ---
@@ -82,16 +89,18 @@ curl -X POST http://localhost:8001/find-similar \
 
 | Service | URL |
 |---------|-----|
-| Lead Classifier Swagger | http://localhost:8000/docs |
-| Lead Classifier ReDoc | http://localhost:8000/redoc |
-| Similarity Search Swagger | http://localhost:8001/docs |
-| Similarity Search ReDoc | http://localhost:8001/redoc |
+| Lead Classifier Swagger (live) | https://keabuilder-ai-assessment-production.up.railway.app/docs |
+| Lead Classifier ReDoc (live) | https://keabuilder-ai-assessment-production.up.railway.app/redoc |
+| Similarity Search Swagger | *(deploying)* |
+| Similarity Search ReDoc | *(deploying)* |
 
 ---
 
 ## System Design
 
 All 7 architectural answers: [`docs/system_design_answers.md`](docs/system_design_answers.md)
+
+End-to-end project explanation: [`docs/project_explainer.md`](docs/project_explainer.md)
 
 Covers:
 1. Lead classification system design
@@ -124,7 +133,8 @@ keabuilder-ai-assessment/
 │   ├── requirements.txt
 │   └── sample_output.json              # 3 test cases with scores
 └── docs/
-    └── system_design_answers.md        # Full architectural answers (Q1–Q7)
+    ├── system_design_answers.md        # Full architectural answers (Q1–Q7)
+    └── project_explainer.md            # End-to-end project explanation (how it works)
 ```
 
 ---
@@ -134,7 +144,7 @@ keabuilder-ai-assessment/
 | Component | Technology |
 |-----------|-----------|
 | API Framework | FastAPI |
-| AI Model | Claude `claude-sonnet-4-20250514` (Anthropic) |
+| AI Model | Claude `claude-sonnet-4-6` (Anthropic) |
 | NLP | scikit-learn TF-IDF + cosine similarity |
 | Runtime | Python 3.11+ |
 | Data Validation | Pydantic v2 |
