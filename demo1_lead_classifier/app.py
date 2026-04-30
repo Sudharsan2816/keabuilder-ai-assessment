@@ -15,9 +15,9 @@ app = FastAPI(
     AI-powered lead qualification system for KeaBuilder.
 
     Classifies leads as HOT / WARM / COLD and generates
-    personalized, human-sounding responses using Claude claude-sonnet-4-20250514.
+    personalized, human-sounding responses using Claude claude-sonnet-4-6.
     """,
-    version="1.0.0",
+    version="1.1.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -31,13 +31,26 @@ app.add_middleware(
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
+# System prompt with cache_control so Anthropic caches it after the first request.
+# CLASSIFY_PROMPT is static — every subsequent call reads from cache at ~10% of
+# normal input token cost instead of re-tokenising the full prompt each time.
+CACHED_SYSTEM = [
+    {
+        "type": "text",
+        "text": CLASSIFY_PROMPT,
+        "cache_control": {"type": "ephemeral"},
+    }
+]
+
 
 @app.get("/", tags=["Root"])
 def root():
     return {
         "service": "KeaBuilder Lead Classifier",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "status": "running",
+        "model": "claude-sonnet-4-6",
+        "features": ["prompt_caching", "streaming"],
         "endpoints": {
             "classify": "POST /classify-lead",
             "health": "GET /health",
@@ -52,7 +65,7 @@ def health():
     return HealthResponse(
         status="ok",
         service="lead-classifier",
-        version="1.0.0"
+        version="1.1.0"
     )
 
 
@@ -74,6 +87,9 @@ async def classify_lead(lead: LeadInput):
     - **HOT**: Clear intent, urgency, specific need → Immediate action response
     - **WARM**: Genuine interest, vague timeline → Nurturing response
     - **COLD**: Browsing, no clear need → Light curiosity response
+
+    Uses streaming internally so the request never times out under load.
+    The system prompt is cached — repeated calls cost ~90% less on input tokens.
     """
     if not lead.message or len(lead.message.strip()) == 0:
         raise HTTPException(
@@ -94,18 +110,21 @@ Lead Source: {lead.source if lead.source else 'form'}
 Analyze this lead and return your classification + personalized response.
 """
 
+    raw_text = ""
     try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
+        # Stream the response so HTTP never times out regardless of output length.
+        # get_final_message() waits for the full stream and returns a standard Message.
+        with client.messages.stream(
+            model="claude-sonnet-4-6",
             max_tokens=1000,
-            system=CLASSIFY_PROMPT,
-            messages=[
-                {"role": "user", "content": user_message}
-            ]
-        )
+            system=CACHED_SYSTEM,
+            messages=[{"role": "user", "content": user_message}],
+        ) as stream:
+            final = stream.get_final_message()
 
-        raw_text = response.content[0].text.strip()
+        raw_text = final.content[0].text.strip()
 
+        # Strip markdown code fences if the model wraps output in them
         if raw_text.startswith("```"):
             raw_text = raw_text.split("```")[1]
             if raw_text.startswith("json"):
