@@ -1,0 +1,70 @@
+{
+  "test_cases": [
+    {
+      "case": "HOT Lead",
+      "input": {
+        "name": "Ravi Kumar",
+        "email": "ravi@startup.com",
+        "business_type": "SaaS",
+        "message": "Need funnels for product launch next month. What are your pricing plans?",
+        "source": "landing_page"
+      },
+      "expected_output": {
+        "classification": "HOT",
+        "confidence": 0.94,
+        "reasoning": "Lead has a concrete deadline (next month), specific use case (product launch), and explicitly asked for pricing — all strong purchase-intent signals.",
+        "signals": [
+          "deadline mentioned: next month",
+          "pricing explicitly requested",
+          "specific use case: product launch funnel"
+        ],
+        "response": "Hey Ravi! A product launch funnel with a one-month runway is exactly where KeaBuilder shines. I'd love to walk you through our pricing and show you a template that fits SaaS launches — we can typically have you live in 48 hours. Are you free for a 15-minute call this week?",
+        "follow_up_question": null
+      }
+    },
+    {
+      "case": "WARM Lead",
+      "input": {
+        "name": "Priya",
+        "email": "priya@livewellcoaching.com",
+        "business_type": "Coaching",
+        "message": "I run a coaching business and I'm exploring tools to capture leads from my website. Not sure what I need yet.",
+        "source": "blog"
+      },
+      "expected_output": {
+        "classification": "WARM",
+        "confidence": 0.81,
+        "reasoning": "Priya has a clear business context and genuine interest in lead capture, but no urgency and explicitly stated she's still exploring — classic warm nurturing opportunity.",
+        "signals": [
+          "exploring options, no urgency",
+          "specific business type: coaching",
+          "identified pain point: website lead capture"
+        ],
+        "response": "Hi Priya! Coaching businesses are one of our biggest use cases — a well-placed lead capture form with a freebie offer can turn casual blog readers into booked discovery calls. Since you're still exploring, it might help to see how a few other coaches use KeaBuilder. Want me to send over 2-3 examples that match your style?",
+        "follow_up_question": null
+      }
+    },
+    {
+      "case": "COLD Lead",
+      "input": {
+        "name": null,
+        "email": null,
+        "business_type": null,
+        "message": "hi",
+        "source": "form"
+      },
+      "expected_output": {
+        "classification": "COLD",
+        "confidence": 0.97,
+        "reasoning": "Single-word message with no name, email, or business context — no signals of intent or urgency whatsoever.",
+        "signals": [
+          "one-word message",
+          "no name or email provided",
+          "no business context"
+        ],
+        "response": "Hey there! Thanks for dropping by KeaBuilder. We help businesses capture and qualify leads automatically using smart funnels. Curious — what kind of project are you working on? Even a rough idea helps me point you in the right direction.",
+        "follow_up_question": "What kind of business or project are you working on right now?"
+      }
+    }
+  ]
+}

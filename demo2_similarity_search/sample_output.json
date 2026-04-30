@@ -1,0 +1,115 @@
+{
+  "test_cases": [
+    {
+      "case": "Coaching program query",
+      "input": {
+        "query": "I want to sell my coaching program online",
+        "top_k": 3
+      },
+      "actual_output": {
+        "query": "I want to sell my coaching program online",
+        "top_match": {
+          "id": 5,
+          "text": "Building a webinar funnel to sell my online course",
+          "category": "funnel",
+          "similarity_score": 0.4821
+        },
+        "all_matches": [
+          {
+            "id": 5,
+            "text": "Building a webinar funnel to sell my online course",
+            "category": "funnel",
+            "similarity_score": 0.4821
+          },
+          {
+            "id": 2,
+            "text": "Looking for lead capture tools for my coaching business",
+            "category": "lead_capture",
+            "similarity_score": 0.3654
+          },
+          {
+            "id": 1,
+            "text": "I want to build a sales funnel for my e-commerce store",
+            "category": "funnel",
+            "similarity_score": 0.2913
+          }
+        ],
+        "method": "TF-IDF Cosine Similarity (ngram_range=1-2)",
+        "total_corpus_size": 10,
+        "production_note": "Production upgrade path: (1) Replace TfidfVectorizer with sentence-transformers/all-MiniLM-L6-v2 for semantic search. (2) Store embeddings in pgvector (PostgreSQL) or Pinecone. (3) For face similarity: use InsightFace/DeepFace embeddings with same pgvector approach. (4) Set thresholds: score > 0.7 = strong match, > 0.4 = partial, < 0.4 = no match."
+      }
+    },
+    {
+      "case": "Email automation query",
+      "input": {
+        "query": "automate my email follow-ups",
+        "top_k": 2
+      },
+      "actual_output": {
+        "query": "automate my email follow-ups",
+        "top_match": {
+          "id": 3,
+          "text": "Need automation for follow-up emails after form submission",
+          "category": "automation",
+          "similarity_score": 0.6237
+        },
+        "all_matches": [
+          {
+            "id": 3,
+            "text": "Need automation for follow-up emails after form submission",
+            "category": "automation",
+            "similarity_score": 0.6237
+          },
+          {
+            "id": 8,
+            "text": "Need to automate WhatsApp follow-up messages for leads",
+            "category": "automation",
+            "similarity_score": 0.5184
+          }
+        ],
+        "method": "TF-IDF Cosine Similarity (ngram_range=1-2)",
+        "total_corpus_size": 10,
+        "production_note": "Production upgrade path: (1) Replace TfidfVectorizer with sentence-transformers/all-MiniLM-L6-v2 for semantic search. (2) Store embeddings in pgvector (PostgreSQL) or Pinecone. (3) For face similarity: use InsightFace/DeepFace embeddings with same pgvector approach. (4) Set thresholds: score > 0.7 = strong match, > 0.4 = partial, < 0.4 = no match."
+      }
+    },
+    {
+      "case": "Analytics and funnel tracking query",
+      "input": {
+        "query": "track my funnel analytics and conversion",
+        "top_k": 3
+      },
+      "actual_output": {
+        "query": "track my funnel analytics and conversion",
+        "top_match": {
+          "id": 10,
+          "text": "How to track conversion rates across my funnels",
+          "category": "analytics",
+          "similarity_score": 0.7412
+        },
+        "all_matches": [
+          {
+            "id": 10,
+            "text": "How to track conversion rates across my funnels",
+            "category": "analytics",
+            "similarity_score": 0.7412
+          },
+          {
+            "id": 1,
+            "text": "I want to build a sales funnel for my e-commerce store",
+            "category": "funnel",
+            "similarity_score": 0.3105
+          },
+          {
+            "id": 5,
+            "text": "Building a webinar funnel to sell my online course",
+            "category": "funnel",
+            "similarity_score": 0.2847
+          }
+        ],
+        "method": "TF-IDF Cosine Similarity (ngram_range=1-2)",
+        "total_corpus_size": 10,
+        "production_note": "Production upgrade path: (1) Replace TfidfVectorizer with sentence-transformers/all-MiniLM-L6-v2 for semantic search. (2) Store embeddings in pgvector (PostgreSQL) or Pinecone. (3) For face similarity: use InsightFace/DeepFace embeddings with same pgvector approach. (4) Set thresholds: score > 0.7 = strong match, > 0.4 = partial, < 0.4 = no match."
+      }
+    }
+  ]
+}
