@@ -1,4 +1,11 @@
 # KeaBuilder AI Engineer Assessment
+
+![Python](https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white)
+![Claude](https://img.shields.io/badge/Claude-Sonnet-FF6B35)
+![Railway](https://img.shields.io/badge/deployed-Railway-0B0D0E?logo=railway&logoColor=white)
+![Pydantic](https://img.shields.io/badge/Pydantic-v2-E92063?logo=pydantic&logoColor=white)
+
 **Dream Reflection Media — AI Engineer Role**
 
 ---
@@ -24,8 +31,8 @@ Uses prompt caching (90% input token savings on repeated calls) and streaming (n
 Finds similar user inputs using TF-IDF cosine similarity.
 Production-ready upgrade path to sentence-transformers + pgvector documented.
 
-- **Swagger UI**: *(deploying)*
-- **ReDoc**: *(deploying)*
+- **Swagger UI**: `http://localhost:8001/docs` (run locally — see Quick Start)
+- **ReDoc**: `http://localhost:8001/redoc` (run locally — see Quick Start)
 
 ---
 
@@ -33,7 +40,7 @@ Production-ready upgrade path to sentence-transformers + pgvector documented.
 
 ```bash
 # 1. Clone and enter project
-git clone https://github.com/YOUR_USERNAME/keabuilder-ai-assessment
+git clone https://github.com/Sudharsan2816/keabuilder-ai-assessment
 cd keabuilder-ai-assessment
 
 # 2. Install dependencies
@@ -91,8 +98,8 @@ curl -X POST http://localhost:8001/find-similar \
 |---------|-----|
 | Lead Classifier Swagger (live) | https://keabuilder-ai-assessment-production.up.railway.app/docs |
 | Lead Classifier ReDoc (live) | https://keabuilder-ai-assessment-production.up.railway.app/redoc |
-| Similarity Search Swagger | *(deploying)* |
-| Similarity Search ReDoc | *(deploying)* |
+| Similarity Search Swagger | http://localhost:8001/docs |
+| Similarity Search ReDoc | http://localhost:8001/redoc |
 
 ---
 
@@ -134,7 +141,7 @@ keabuilder-ai-assessment/
 │   └── sample_output.json              # 3 test cases with scores
 └── docs/
     ├── system_design_answers.md        # Full architectural answers (Q1–Q7)
-    └── project_explainer.md            # End-to-end project explanation (how it works)
+    └── project_explainer.md            # End-to-end project explanation
 ```
 
 ---
