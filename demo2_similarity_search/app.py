@@ -96,7 +96,10 @@ def find_similar(query_input: QueryInput):
             detail="Query must be at least 3 characters long"
         )
 
-    top_k = min(query_input.top_k, len(KNOWLEDGE_BASE))
+    top_k = query_input.top_k if query_input.top_k is not None else 3
+    if top_k < 1:
+        raise HTTPException(status_code=400, detail="top_k must be at least 1")
+    top_k = min(top_k, len(KNOWLEDGE_BASE))
 
     corpus = [item["text"] for item in KNOWLEDGE_BASE]
     all_texts = corpus + [query_input.query]
