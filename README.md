@@ -1,154 +1,123 @@
-# KeaBuilder AI Engineer Assessment
-**Dream Reflection Media — AI Engineer Role**
+# AI Lead Intelligence API
 
----
+FastAPI project for lead qualification and lightweight text similarity search.
 
-## Overview
+This repository was previously named `keabuilder-ai-assessment`. The recruiter-friendly name should be `ai-lead-intelligence-api` because the project is not just an assessment: it demonstrates two practical AI API patterns for a sales/marketing product.
 
-Two working APIs built to demonstrate AI system thinking and practical
-implementation for the KeaBuilder platform.
+## What It Builds
 
----
+### 1. Lead Classifier
 
-## Live Demos
+Classifies inbound leads as `HOT`, `WARM`, or `COLD` and generates a personalized response.
 
-### Demo 1: Lead Classifier
-Classifies incoming leads as HOT / WARM / COLD using Claude `claude-sonnet-4-6`.
-Generates personalized, human-sounding responses. Handles incomplete inputs intelligently.
-Uses prompt caching (90% input token savings on repeated calls) and streaming (no HTTP timeouts).
+Key implementation details:
 
-- **Swagger UI**: https://keabuilder-ai-assessment-production.up.railway.app/docs
-- **ReDoc**: https://keabuilder-ai-assessment-production.up.railway.app/redoc
+- FastAPI endpoint for structured lead input.
+- Claude-powered classification and response generation.
+- Prompt caching for repeated static system instructions.
+- Streaming response handling to reduce timeout risk.
+- Pydantic request/response models.
 
-### Demo 2: Similarity Search
-Finds similar user inputs using TF-IDF cosine similarity.
-Production-ready upgrade path to sentence-transformers + pgvector documented.
+Live API docs:
 
-- **Swagger UI**: *(deploying)*
-- **ReDoc**: *(deploying)*
+- Swagger: https://keabuilder-ai-assessment-production.up.railway.app/docs
+- ReDoc: https://keabuilder-ai-assessment-production.up.railway.app/redoc
 
----
+### 2. Similarity Search
 
-## Quick Start
+Finds similar user inputs from a small knowledge base using TF-IDF cosine similarity.
 
-```bash
-# 1. Clone and enter project
-git clone https://github.com/YOUR_USERNAME/keabuilder-ai-assessment
-cd keabuilder-ai-assessment
+Key implementation details:
 
-# 2. Install dependencies
-pip install -r requirements.txt
+- FastAPI search endpoint.
+- scikit-learn `TfidfVectorizer`.
+- Cosine similarity ranking.
+- Documented production path to sentence-transformers plus pgvector.
 
-# 3. Set your API key
-cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+## Architecture
 
-# 4. Run Demo 1 — Lead Classifier
-cd demo1_lead_classifier
-python -m uvicorn app:app --reload --port 8000
-
-# 5. Run Demo 2 — Similarity Search (new terminal)
-cd ../demo2_similarity_search
-python -m uvicorn app:app --reload --port 8001
+```text
+Client
+  -> FastAPI
+  -> Lead Classifier
+      -> Claude prompt
+      -> structured lead score + response
+  -> Similarity Search
+      -> TF-IDF vectors
+      -> cosine similarity
+      -> ranked matches
 ```
-
----
-
-## Test the APIs
-
-```bash
-# HOT Lead — pricing asked, deadline next month
-curl -X POST http://localhost:8000/classify-lead \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Ravi Kumar","email":"ravi@startup.com","business_type":"SaaS","message":"Need funnels for product launch next month. Pricing?","source":"landing_page"}'
-
-# WARM Lead — exploring, no urgency
-curl -X POST http://localhost:8000/classify-lead \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Priya","email":"priya@coach.com","business_type":"Coaching","message":"I run a coaching business and exploring tools for lead capture.","source":"blog"}'
-
-# COLD Lead — no context
-curl -X POST http://localhost:8000/classify-lead \
-  -H "Content-Type: application/json" \
-  -d '{"message":"hi"}'
-
-# Similarity Search — coaching program
-curl -X POST http://localhost:8001/find-similar \
-  -H "Content-Type: application/json" \
-  -d '{"query":"I want to sell my coaching program online","top_k":3}'
-
-# Similarity Search — automation
-curl -X POST http://localhost:8001/find-similar \
-  -H "Content-Type: application/json" \
-  -d '{"query":"automate my email follow-ups","top_k":2}'
-```
-
----
-
-## Interactive API Docs
-
-| Service | URL |
-|---------|-----|
-| Lead Classifier Swagger (live) | https://keabuilder-ai-assessment-production.up.railway.app/docs |
-| Lead Classifier ReDoc (live) | https://keabuilder-ai-assessment-production.up.railway.app/redoc |
-| Similarity Search Swagger | *(deploying)* |
-| Similarity Search ReDoc | *(deploying)* |
-
----
-
-## System Design
-
-All 7 architectural answers: [`docs/system_design_answers.md`](docs/system_design_answers.md)
-
-End-to-end project explanation: [`docs/project_explainer.md`](docs/project_explainer.md)
-
-Covers:
-1. Lead classification system design
-2. Multi-provider content routing architecture
-3. LoRA integration for personalised AI images
-4. Face/text similarity search with pgvector
-5. Multi-AI fallback strategy (3-layer)
-6. High-volume AI request handling
-7. Tools and frameworks
-
----
-
-## Project Structure
-
-```
-keabuilder-ai-assessment/
-├── .env.example                        # API key template
-├── .gitignore
-├── README.md
-├── requirements.txt                    # Root dependencies
-├── demo1_lead_classifier/
-│   ├── app.py                          # FastAPI app + endpoints
-│   ├── prompts.py                      # Claude prompt + system design data
-│   ├── models.py                       # Pydantic input/output models
-│   ├── requirements.txt
-│   └── sample_output.json              # 3 test cases (HOT/WARM/COLD)
-├── demo2_similarity_search/
-│   ├── app.py                          # FastAPI app + TF-IDF search
-│   ├── models.py                       # Pydantic input/output models
-│   ├── requirements.txt
-│   └── sample_output.json              # 3 test cases with scores
-└── docs/
-    ├── system_design_answers.md        # Full architectural answers (Q1–Q7)
-    └── project_explainer.md            # End-to-end project explanation (how it works)
-```
-
----
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|-----------|
-| API Framework | FastAPI |
-| AI Model | Claude `claude-sonnet-4-6` (Anthropic) |
-| NLP | scikit-learn TF-IDF + cosine similarity |
-| Runtime | Python 3.11+ |
-| Data Validation | Pydantic v2 |
-| Production DB | PostgreSQL + pgvector |
-| Production ML | sentence-transformers |
-| Production Queue | BullMQ / SQS |
-| Production Cache | Redis (ElastiCache) |
+- Python, FastAPI, Pydantic
+- Anthropic Claude
+- scikit-learn TF-IDF and cosine similarity
+- Railway deployment for the lead classifier demo
+
+## Run Locally
+
+```bash
+git clone https://github.com/Sudharsan2816/ai-lead-intelligence-api
+cd ai-lead-intelligence-api
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+Run the lead classifier:
+
+```bash
+cd demo1_lead_classifier
+python -m uvicorn app:app --reload --port 8000
+```
+
+Run similarity search in another terminal:
+
+```bash
+cd demo2_similarity_search
+python -m uvicorn app:app --reload --port 8001
+```
+
+## Example Requests
+
+```bash
+curl -X POST http://localhost:8000/classify-lead \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Ravi Kumar",
+    "email": "ravi@startup.com",
+    "business_type": "SaaS",
+    "message": "Need funnels for product launch next month. Pricing?",
+    "source": "landing_page"
+  }'
+```
+
+```bash
+curl -X POST http://localhost:8001/find-similar \
+  -H "Content-Type: application/json" \
+  -d '{"query": "I want to sell my coaching program online", "top_k": 3}'
+```
+
+## Portfolio Value
+
+This repo demonstrates:
+
+- Applied LLM API development.
+- Prompt engineering tied to business classification logic.
+- Structured API contracts with Pydantic.
+- Baseline ML similarity search.
+- Clear production upgrade thinking for semantic search and vector databases.
+
+## Current Production Gaps
+
+- Add unit tests for lead classification validation and similarity search.
+- Add Docker Compose for both services.
+- Replace hardcoded in-memory similarity data with a persistent store.
+- Add request authentication and rate limiting.
+- Add evaluation data for lead classification quality.
+
+## Recommended GitHub Metadata
+
+- Repository name: `ai-lead-intelligence-api`
+- Description: `FastAPI lead intelligence system with Claude-powered lead scoring, personalized responses, TF-IDF similarity search, and a documented pgvector upgrade path.`
+- Topics: `python`, `fastapi`, `llm`, `anthropic`, `lead-scoring`, `similarity-search`, `scikit-learn`, `backend`, `ai-engineering`
