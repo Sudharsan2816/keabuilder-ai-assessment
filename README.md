@@ -20,8 +20,9 @@ Key implementation details:
 
 Live API docs:
 
-- Swagger: https://keabuilder-ai-assessment-production.up.railway.app/docs
-- ReDoc: https://keabuilder-ai-assessment-production.up.railway.app/redoc
+- API root: https://ai-lead-intelligence-api.vercel.app/
+- Swagger: https://ai-lead-intelligence-api.vercel.app/docs
+- ReDoc: https://ai-lead-intelligence-api.vercel.app/redoc
 
 ### 2. Similarity Search
 
@@ -53,7 +54,7 @@ Client
 - Python, FastAPI, Pydantic
 - NVIDIA NIM-compatible APIs or Anthropic Claude
 - scikit-learn TF-IDF and cosine similarity
-- Railway deployment for the lead classifier demo
+- Vercel production deployment with Railway-compatible container configuration
 
 ## Run Locally
 
@@ -119,7 +120,18 @@ This repo demonstrates:
 - Replace hardcoded in-memory similarity data with a persistent store.
 - Add evaluation data for lead classification quality.
 
-## Railway Deployment
+## Production Deployment
+
+The lead classifier is deployed on Vercel:
+
+- Production API: https://ai-lead-intelligence-api.vercel.app
+- Health check: https://ai-lead-intelligence-api.vercel.app/health
+- Swagger: https://ai-lead-intelligence-api.vercel.app/docs
+
+`demo1_lead_classifier/vercel.json` declares `app.py` as the FastAPI service
+entrypoint. Production variables are configured as sensitive Vercel variables.
+
+### Railway Alternative
 
 The `demo1_lead_classifier/Dockerfile` and `railway.json` deploy the lead
 classifier from the service's configured monorepo root and verify `GET /health`
