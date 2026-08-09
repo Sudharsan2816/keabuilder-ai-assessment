@@ -13,15 +13,16 @@ Classifies inbound leads as `HOT`, `WARM`, or `COLD` and generates a personalize
 Key implementation details:
 
 - FastAPI endpoint for structured lead input.
-- Claude-powered classification and response generation.
-- Prompt caching for repeated static system instructions.
-- Streaming response handling to reduce timeout risk.
+- NVIDIA-powered classification by default, with optional Anthropic support.
+- Prompt caching when Anthropic is selected and the prompt is cache-eligible.
+- Non-blocking provider requests with explicit timeouts and error handling.
 - Pydantic request/response models.
 
 Live API docs:
 
-- Swagger: https://keabuilder-ai-assessment-production.up.railway.app/docs
-- ReDoc: https://keabuilder-ai-assessment-production.up.railway.app/redoc
+- API root: https://ai-lead-intelligence-api.vercel.app/
+- Swagger: https://ai-lead-intelligence-api.vercel.app/docs
+- ReDoc: https://ai-lead-intelligence-api.vercel.app/redoc
 
 ### 2. Similarity Search
 
@@ -51,9 +52,9 @@ Client
 ## Tech Stack
 
 - Python, FastAPI, Pydantic
-- Anthropic Claude
+- NVIDIA NIM-compatible APIs or Anthropic Claude
 - scikit-learn TF-IDF and cosine similarity
-- Railway deployment for the lead classifier demo
+- Vercel production deployment with Railway-compatible container configuration
 
 ## Run Locally
 
@@ -63,6 +64,10 @@ cd ai-lead-intelligence-api
 pip install -r requirements.txt
 cp .env.example .env
 ```
+
+Set `NVIDIA_API_KEY` in `.env` before using the classification endpoint. The
+health and documentation endpoints remain available when the LLM is not yet
+configured.
 
 Run the lead classifier:
 
@@ -110,14 +115,41 @@ This repo demonstrates:
 
 ## Current Production Gaps
 
-- Add unit tests for lead classification validation and similarity search.
-- Add Docker Compose for both services.
+- Add persistent, distributed rate limiting for the public classification API.
+- Add Docker Compose if both demo services need to run together.
 - Replace hardcoded in-memory similarity data with a persistent store.
-- Add request authentication and rate limiting.
 - Add evaluation data for lead classification quality.
+
+## Production Deployment
+
+The lead classifier is deployed on Vercel:
+
+- Production API: https://ai-lead-intelligence-api.vercel.app
+- Health check: https://ai-lead-intelligence-api.vercel.app/health
+- Swagger: https://ai-lead-intelligence-api.vercel.app/docs
+
+`demo1_lead_classifier/vercel.json` declares `app.py` as the FastAPI service
+entrypoint. Production variables are configured as sensitive Vercel variables.
+
+### Railway Alternative
+
+The `demo1_lead_classifier/Dockerfile` and `railway.json` deploy the lead
+classifier from the service's configured monorepo root and verify `GET /health`
+before a release is marked healthy. Configure these service variables in Railway:
+
+```text
+LLM_PROVIDER=nvidia
+NVIDIA_API_KEY=<secret>
+NVIDIA_MODEL=nvidia/llama-3.3-nemotron-super-49b-v1
+API_TOKEN=<long-random-secret>
+```
+
+After deployment, generate a Railway public domain and verify `/health`, `/docs`,
+and an authenticated `POST /classify-lead` request. Supply the deployment token
+in the `X-API-Key` header; health and API documentation remain public.
 
 ## Recommended GitHub Metadata
 
 - Repository name: `ai-lead-intelligence-api`
-- Description: `FastAPI lead intelligence system with Claude-powered lead scoring, personalized responses, TF-IDF similarity search, and a documented pgvector upgrade path.`
-- Topics: `python`, `fastapi`, `llm`, `anthropic`, `lead-scoring`, `similarity-search`, `scikit-learn`, `backend`, `ai-engineering`
+- Description: `FastAPI lead intelligence system with NVIDIA-powered lead scoring, personalized responses, TF-IDF similarity search, and a documented pgvector upgrade path.`
+- Topics: `python`, `fastapi`, `llm`, `nvidia`, `anthropic`, `lead-scoring`, `similarity-search`, `scikit-learn`, `backend`, `ai-engineering`

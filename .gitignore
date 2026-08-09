@@ -1,5 +1,7 @@
 venv/
+.venv/
 .env
+.env.deploy
 __pycache__/
 *.pyc
 *.pyo
